@@ -5,6 +5,7 @@ defmodule Tonic do
 
   require Tonic.Canvas
   require Tonic.Grid
-  require Tonic.Objects
+  require Tonic.Shape
+  require Tonic.Transform
 
 end

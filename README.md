@@ -19,8 +19,7 @@ defmodule Sample do
 
   alias Tonic.Canvas
   alias Tonic.Grid
-  alias Tonic.Objects
-
+  alias Tonic.Shape
 
   def rand_hex do
     Enum.random(0..255) |> Integer.to_string(16)
@@ -34,13 +33,13 @@ defmodule Sample do
 
     dots_data = for x <- [1..9], y <- [1..9], into: [], do
       radius = Enum.random(13..19)
-      [:circle, {x, y}, radius, fill: random_color(), stroke: none]
+      Shape.circle({x, y}, radius, fill: random_color(), stroke: none)
     end
 
-    Canvas.new({500, 500})  
+    %Canvas{width: 500, height: 500}  
     |> Grid.push(:square, 50)
-    |> Objects.add(dots_data)
-    |> Canvas.render()
+    |> Shape.add(dots_data)
+    |> Canvas.to_svg()
   end
   
 end
