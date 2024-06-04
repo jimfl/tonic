@@ -7,10 +7,10 @@ defmodule Tonic.Grid do
   to the native pixels on the canvas.  In the following example, this draws a
   circle at native x,y coordinates 50, 50:
 
-      Tonic.Canvas.new({100, 100})
+      %Tonic.Canvas{{100, 100}}
       |> Grid.push(:square, 5)
-      |> Objects.add([
-        [:circle, {10, 10}, 10]
+      |> Shape.add([
+        Shape.circle({10, 10}, 10)
       ])
   
   Grids are pushed onto a stack so that sub-components which draw complex
@@ -23,13 +23,15 @@ defmodule Tonic.Grid do
   Certain transformations on groups can also be done relative to the grid, most notably
   translations. These however are explicitly done via the grid.
 
-      [:group, [...], transform: [translate: {50, 50}]]
+      Shape.group(...)
+      |> Transform.translate({50, 50})
 
   would be equivalent to
 
-      [:group, [...], transform: [grid_translate: {10, 10}]]
+      Shape.group(...)
+      |> Transform.grid_translate({10, 10})
 
-  under a square grid with spacing 5.
+  under a square grid with spacing 5. Note that the synax for grid 
 
   Currently supported grids are 
   * `:square` -- with a single spacing for x and y
@@ -74,10 +76,12 @@ defmodule Tonic.Grid do
 
   def resolve(points, %Canvas{grid_stack: [top | _]})
       when is_list(points) do
-    points |> Enum.map(fn x -> top.(x) end)
+    points |> Enum.map(top)
   end
 
   def resolve(point, %Canvas{grid_stack: [top | _]}) do
     top.(point)
   end
+
+  def identity(x), do: x
 end

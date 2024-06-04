@@ -4,7 +4,7 @@ defmodule Tonic.Canvas do
     height: 0, 
     options: [],
     shapes: [],
-    grid_stack: []
+    grid_stack: [&Tonic.Grid.identity/1]
   ]
 
   def to_svg(canvas) do

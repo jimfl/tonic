@@ -23,7 +23,7 @@ defmodule Tonic.Transform do
     |> add_to_shape(shape)
   end
 
-  def translate(shape, x, y) do
+  def translate(shape, {x, y}) do
     %Transform{type: :translate, magnitude: {x, y}}
     |> add_to_shape(shape)
   end
