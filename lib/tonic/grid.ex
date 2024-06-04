@@ -12,7 +12,7 @@ defmodule Tonic.Grid do
       |> Shape.add([
         Shape.circle({10, 10}, 10)
       ])
-  
+
   Grids are pushed onto a stack so that sub-components which draw complex
   shapes can have their own grid locally. Only object coordinates are resolved
   through the current grid, not distances or dimensions. In the above example,
@@ -41,7 +41,7 @@ defmodule Tonic.Grid do
   In the triangular grid the points a, b, and c represent moving left, down-and-left, and down-and-right
   respectively. Usually only 2 of the coordinates need be non-zero, so there are multiple ways to represent
   the same point.
-  
+
   """
 
   def push(canvas = %Canvas{}, :square, spacing) do

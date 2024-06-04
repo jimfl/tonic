@@ -1,5 +1,4 @@
 defmodule Tonic.GridTest do
-
   use ExUnit.Case
   alias Tonic.Grid
 
@@ -20,23 +19,21 @@ defmodule Tonic.GridTest do
     assert (canvas.grid_stack |> List.first()).({1, 1}) == current_trans
   end
 
-
   test "implicit push and pop with grid shape" do
-    canvas = %Tonic.Canvas{}
-    |> Tonic.Shape.add( 
-      Tonic.Shape.grid(:square, spacing: 5) 
-      |> Tonic.Shape.add( Tonic.Shape.square({10, 10}, 30) 
-      ) 
-    )
+    canvas =
+      %Tonic.Canvas{}
+      |> Tonic.Shape.add(
+        Tonic.Shape.grid(:square, spacing: 5)
+        |> Tonic.Shape.add(Tonic.Shape.square({10, 10}, 30))
+      )
 
     assert length(canvas.shapes) == 1
     [square | _] = canvas.shapes
-    [{50, 50}| _] = square.coords
+    [{50, 50} | _] = square.coords
   end
 
   test "can't pop the last grid off the stack" do
     canvas = %Tonic.Canvas{} |> Grid.pop() |> Grid.pop() |> Grid.pop()
     assert length(canvas.grid_stack) == 1
   end
-
 end
