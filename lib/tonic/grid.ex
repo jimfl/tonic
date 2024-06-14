@@ -1,6 +1,8 @@
 defmodule Tonic.Grid do
   alias Tonic.Canvas
 
+  require Math
+
   @moduledoc """
   Grid allows the Canvas to support different coordinate systems for object
   placement. A grid is a function that takes some coordinates and resolves them
@@ -62,6 +64,17 @@ defmodule Tonic.Grid do
 
   def push(canvas = %Canvas{}, :rectangular, x_spacing, y_spacing) do
     mapper = fn {x, y} -> {x * x_spacing, y * y_spacing} end
+    %{canvas | grid_stack: [mapper | canvas.grid_stack]}
+  end
+
+  def push(canvas = %Canvas{}, :polar, radius_spacing, angle_spacing) do
+    mapper = fn {radius, angle} ->
+      {
+        radius * radius_spacing * Math.cos(Math.deg2rad(angle * angle_spacing)),
+        radius * radius_spacing * Math.sin(Math.deg2rad(angle * angle_spacing))
+      }
+    end
+
     %{canvas | grid_stack: [mapper | canvas.grid_stack]}
   end
 

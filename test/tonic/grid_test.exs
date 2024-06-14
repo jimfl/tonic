@@ -36,4 +36,12 @@ defmodule Tonic.GridTest do
     canvas = %Tonic.Canvas{} |> Grid.pop() |> Grid.pop() |> Grid.pop()
     assert length(canvas.grid_stack) == 1
   end
+
+  test "polar grid" do
+    canvas = %Tonic.Canvas{} |> Grid.push(:polar, 10, 30)
+    # The y-coordinate in these are very close to 0.0, but not exact
+    {10.0, _} = Grid.resolve({1,0}, canvas) 
+    {-20.0,_} = Grid.resolve({2,6}, canvas) 
+
+  end
 end
