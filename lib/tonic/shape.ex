@@ -6,9 +6,7 @@ defmodule Tonic.Shape do
             dimensions: [],
             attributes: %{},
             transforms: [],
-            children: [],
-            parent: nil,
-            canvas: nil
+            children: []
 
   #
   # A D D
@@ -38,7 +36,7 @@ defmodule Tonic.Shape do
   # Add a single shape to a shape
   # returns the shape
   def add(%Shape{} = shape, %Shape{} = child) do
-    %{shape | children: [%{child | parent: shape} | shape.children]}
+    %{shape | children: [child | shape.children]}
   end
 
   # This is a special-case add() which pushes a grid onto the canvas, adds 
@@ -63,11 +61,18 @@ defmodule Tonic.Shape do
   def add(%Canvas{} = canvas, %Shape{} = shape) do
     %{canvas | shapes: [shape |> shape_in_context(canvas) | canvas.shapes]}
   end
+  
+  # In the case where a grid was added to another shape instead of to the canvas directly,
+  # push the grid onto the stack, and change it to a group shape
+  defp shape_in_context(%Shape{name: :grid} = grid, canvas) do
+    grid_type = grid.attributes.grid_type
+    canvas = canvas |> grid_shape_to_push(grid, grid_type)
+    shape_in_context(%{grid | name: :g, attributes: %{}}, canvas)
+  end
 
   defp shape_in_context(shape, canvas) do
     %{
-      shape
-      | canvas: canvas,
+      shape |
         coords: Grid.resolve(shape.coords, canvas),
         children: shape.children |> Enum.map(&shape_in_context(&1, canvas)),
         transforms: shape.transforms |> Transform.grid_resolve(canvas)
@@ -88,6 +93,12 @@ defmodule Tonic.Shape do
     x_spacing = shape.attributes.x_spacing
     y_spacing = shape.attributes.y_spacing
     Grid.push(canvas, :rectangular, x_spacing, y_spacing)
+  end
+
+  defp grid_shape_to_push(canvas, shape, :polar) do
+    radius_spacing = shape.attributes.radius_spacing
+    angle_spacing  = shape.attributes.angle_spacing
+    Grid.push(canvas, :polar, radius_spacing, angle_spacing)
   end
 
   defp grid_shape_to_push(canvas, shape, :custom) do

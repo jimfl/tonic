@@ -1,12 +1,12 @@
 # Tonic
 
-Tonic is a 2-d graphics library for ELixir. Used in conjunction with Kino in LiveBook, it becomes an interactive graphics 
+Tonic is a 2-d graphics library for Elixir. Used in conjunction with Kino in LiveBook, it becomes an interactive graphics 
 playground. 
 
 ## Features
 
 * Outputs SVG 
-* Grid based coordinate systems (square, triangle, rectangular)
+* Grid based coordinate systems (square, triangle, rectangular, polar)
 * Non-imperitive - works by adding Elixir terms to a data structure.
 
 ## Example 

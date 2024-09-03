@@ -32,6 +32,22 @@ defmodule Tonic.GridTest do
     [{50, 50} | _] = square.coords
   end
 
+  test "add grid to shape instead of directly to canvas" do
+    canvas = %Tonic.Canvas{}
+    |> Tonic.Shape.add(
+      Tonic.Shape.group()
+      |> Tonic.Shape.add(
+        Tonic.Shape.grid(:square, spacing: 5)
+        |> Tonic.Shape.add(Tonic.Shape.square({5, 10}, 25))
+      )
+    ) 
+    [outer_group | _] = canvas.shapes
+    [inner_group | _] = outer_group.children
+    :g = inner_group.name
+    [square | _] = inner_group.children
+    [{25, 50} | _] = square.coords
+  end
+
   test "can't pop the last grid off the stack" do
     canvas = %Tonic.Canvas{} |> Grid.pop() |> Grid.pop() |> Grid.pop()
     assert length(canvas.grid_stack) == 1
