@@ -70,6 +70,13 @@ defmodule Tonic.Shape do
     shape_in_context(%{grid | name: :g, attributes: %{}}, canvas)
   end
 
+  defp shape_in_context(%Shape{name: :text} = shape, canvas) do
+    %{shape |
+        coords: Grid.resolve(shape.coords, canvas),
+        transforms: shape.transforms |> Transform.grid_resolve(canvas)
+      }
+  end
+
   defp shape_in_context(shape, canvas) do
     %{
       shape |
@@ -130,6 +137,16 @@ defmodule Tonic.Shape do
 
   def line([_ | _] = points, options \\ []) do
     %Shape{name: :polyline, coords: points}
+    |> add_attributes(options)
+  end
+
+  def arc(from, to, options \\ []) do
+    %Shape{name: :path, coords: [from, to]}
+    |> add_attributes(options)
+  end
+
+  def text(location, text, options \\ []) do
+    %Shape{name: :text, coords: [location], children: [text]}
     |> add_attributes(options)
   end
 

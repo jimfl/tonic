@@ -23,6 +23,13 @@ defmodule Tonic.SVG do
 
   defp render_shape(%Shape{children: []} = shape), do: render_leaf(shape)
 
+  defp render_shape(%Shape{name: :text} = shape) do
+    attr = extract_attributes(shape) |> add_transforms(shape)
+    render_start_tag(:text, attr) <>
+    Enum.join(shape.children, " ") <>
+    render_end_tag(:text)
+  end
+
   defp render_shape(%Shape{name: tag} = shape) do
     attr = extract_attributes(shape) |> add_transforms(shape)
 
@@ -37,6 +44,7 @@ defmodule Tonic.SVG do
     ]
     |> IO.iodata_to_binary()
   end
+
 
   defp render_leaf(%Shape{name: tag} = shape) do
     attr = extract_attributes(shape) |> add_transforms(shape)
@@ -53,6 +61,23 @@ defmodule Tonic.SVG do
     [{x, y} | _] = shape.coords
     [r_x, r_y | _] = shape.dimensions
     shape.attributes |> Map.merge(%{cx: x, cy: y, rx: r_x, ry: r_y})
+  end
+
+  defp extract_attributes(%Shape{name: :path} = shape) do
+    [{from_x, from_y}, {to_x, to_y} | _] = shape.coords
+    radius = (abs(from_x - to_x) + abs(from_y - to_y)) / 2
+    
+    shape.attributes
+    |> Map.merge(%{
+      d: "M #{from_x} #{from_y} A #{radius} #{radius} 0 0 0 #{to_x} #{to_y}"
+    })
+  end
+
+  defp extract_attributes(%Shape{name: :text} = shape) do
+    [{x, y} | _] = shape.coords
+    shape.attributes |> Map.merge(%{
+      x: x, y: y
+    })
   end
 
   defp extract_attributes(%Shape{name: :polyline} = shape) do
